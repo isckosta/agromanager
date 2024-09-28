@@ -86,7 +86,7 @@ cd agromanager
 pnpm start ou pnpm run dev
 ```
 
-O frontend estará disponível em `http://localhost:3001`.
+O frontend estará disponível em `http://localhost:5173`.
 
 ## Estrutura do Projeto
 
