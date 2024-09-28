@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
+import './Dashboard.css'; // Adicione uma folha de estilo para melhorar a aparência
 
 Chart.register(ArcElement, Tooltip, Legend);
 
@@ -32,8 +33,13 @@ function Dashboard() {
       {
         label: 'Fazendas por Estado',
         data: dashboardData.fazendasPorEstado.map(item => item.total),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+        backgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FFA07A', '#8A2BE2', '#DA70D6'
+        ],
+        hoverBackgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FFA07A', '#8A2BE2', '#DA70D6'
+        ],
+        borderWidth: 1
       }
     ]
   };
@@ -47,6 +53,7 @@ function Dashboard() {
         data: dashboardData.culturas.map(item => item.total),
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+        borderWidth: 1
       }
     ]
   };
@@ -60,43 +67,70 @@ function Dashboard() {
         data: [dashboardData.usoSolo.total_agricultavel, dashboardData.usoSolo.total_vegetacao],
         backgroundColor: ['#FF6384', '#36A2EB'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+        borderWidth: 1
       }
     ]
   };
 
-  // Opções para o Chart.js com maintainAspectRatio false
+  // Opções para o Chart.js com maintainAspectRatio false e porcentagens no gráfico
   const options = {
     maintainAspectRatio: false,
+    aspectRatio: 1, // Força o gráfico a ter proporção 1:1 (perfeito para gráficos de pizza)
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            const dataset = tooltipItem.dataset;
+            const total = dataset.data.reduce((prev, current) => prev + current, 0);
+            const currentValue = dataset.data[tooltipItem.dataIndex];
+            const percentage = ((currentValue / total) * 100).toFixed(2);
+            return `${tooltipItem.label}: ${currentValue} (${percentage}%)`;
+          },
+        },
+      },
+    },
   };
 
   return (
     <div className="dashboard-container">
-      <h2>Dashboard</h2>
+      <h2 className="dashboard-title">Dashboard</h2>
       
-      {/* Total de fazendas e área total */}
+      {/* Informações principais sobre as fazendas */}
       <div className="dashboard-info">
-        <h3>Total de Fazendas: {dashboardData.totalFazendas}</h3>
-        <h3>Total de Área (hectares): {dashboardData.totalArea}</h3>
+        <div className="info-box">
+          <h3>Total de Fazendas</h3>
+          <p>{dashboardData.totalFazendas}</p>
+        </div>
+        <div className="info-box">
+          <h3>Total de Área (hectares)</h3>
+          <p>{dashboardData.totalArea}</p>
+        </div>
       </div>
 
       {/* Gráficos lado a lado */}
-      <div className="charts-row">
-        {/* Gráfico de pizza por estado */}
+      <div className="charts-grid">
         <div className="chart-container">
           <h3>Fazendas por Estado</h3>
-          <Pie data={fazendasPorEstadoData} options={options} />
+          <div className="chart">
+            <Pie data={fazendasPorEstadoData} options={options} />
+          </div>
         </div>
 
-        {/* Gráfico de pizza por cultura */}
         <div className="chart-container">
           <h3>Fazendas por Cultura</h3>
-          <Pie data={culturasData} options={options} />
+          <div className="chart">
+            <Pie data={culturasData} options={options} />
+          </div>
         </div>
 
-        {/* Gráfico de pizza por uso de solo */}
         <div className="chart-container">
           <h3>Uso de Solo</h3>
-          <Pie data={usoSoloData} options={options} />
+          <div className="chart">
+            <Pie data={usoSoloData} options={options} />
+          </div>
         </div>
       </div>
     </div>

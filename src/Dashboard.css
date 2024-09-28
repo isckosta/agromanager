@@ -1,0 +1,45 @@
+.dashboard-container {
+    padding: 20px;
+  }
+  
+  .dashboard-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+  }
+  
+  .info-box {
+    background: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 45%;
+  }
+  
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .chart-container {
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    height: 400px !important; /* Ajuste o tamanho conforme necessário */
+    overflow: hidden; /* Evita que o gráfico saia do container */
+  }
+  
+  .chart {
+    height: 70%; /* Garante que o gráfico ocupe todo o espaço */
+    width: 100%;
+  }
+  
+  

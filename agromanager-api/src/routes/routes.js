@@ -6,19 +6,32 @@ const pool = require('../db');
 router.get('/dashboard', async (req, res) => {
   try {
     // Total de fazendas
-    const totalFazendas = await pool.query('SELECT COUNT(*) FROM produtores');
-    console.log('totalFazendas:', totalFazendas);
+    const totalFazendas = await pool.query('SELECT COUNT(*) FROM fazendas');
+
     // Total de área
-    const totalArea = await pool.query('SELECT SUM(area_total) FROM produtores');
+    const totalArea = await pool.query('SELECT SUM(area_total) FROM fazendas');
 
     // Gráfico de pizza por estado
-    const fazendasPorEstado = await pool.query('SELECT estado, COUNT(*) AS total FROM produtores GROUP BY estado');
+    const fazendasPorEstado = await pool.query(`
+      SELECT m.uf AS estado, COUNT(*) AS total 
+      FROM fazendas f
+      JOIN municipio m ON f.municipio_id = m.id
+      GROUP BY m.uf
+    `);
 
     // Gráfico de pizza por cultura
-    const culturas = await pool.query('SELECT unnest(culturas) AS cultura, COUNT(*) AS total FROM produtores GROUP BY cultura');
+    const culturas = await pool.query(`
+      SELECT c.nome AS cultura, COUNT(*) AS total
+      FROM fazenda_culturas fc
+      JOIN culturas c ON fc.cultura_id = c.id
+      GROUP BY c.nome
+    `);
 
     // Gráfico de pizza por uso de solo
-    const usoSolo = await pool.query('SELECT SUM(area_agricultavel) AS total_agricultavel, SUM(area_vegetacao) AS total_vegetacao FROM produtores');
+    const usoSolo = await pool.query(`
+      SELECT SUM(area_agricultavel) AS total_agricultavel, SUM(area_vegetacao) AS total_vegetacao 
+      FROM fazendas
+    `);
 
     res.json({
       totalFazendas: totalFazendas.rows[0].count,
@@ -32,5 +45,7 @@ router.get('/dashboard', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar dados do dashboard' });
   }
 });
+
+
 
 module.exports = router;
