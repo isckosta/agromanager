@@ -8,6 +8,8 @@ Chart.register(ArcElement, Tooltip, Legend);
 function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
 
+  console.log('DashboardData:', dashboardData);
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -26,13 +28,13 @@ function Dashboard() {
     return <p>Carregando dados do dashboard...</p>;
   }
 
-  // Dados para o gráfico de pizza por estado
+  // Certifique-se de que os dados estão sendo convertidos para números
   const fazendasPorEstadoData = {
     labels: dashboardData.fazendasPorEstado.map(item => item.estado),
     datasets: [
       {
         label: 'Fazendas por Estado',
-        data: dashboardData.fazendasPorEstado.map(item => item.total),
+        data: dashboardData.fazendasPorEstado.map(item => parseInt(item.total, 10)), // Converta strings para números
         backgroundColor: [
           '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FFA07A', '#8A2BE2', '#DA70D6'
         ],
@@ -44,13 +46,26 @@ function Dashboard() {
     ]
   };
 
+  // const fazendasPorEstadoData = {
+  //   labels: ['AM', 'BA', 'CE', 'MA'],
+  //   datasets: [
+  //     {
+  //       label: 'Fazendas por Estado',
+  //       data: [1, 2, 3, 4], // Teste com valores diferentes
+  //       backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+  //       hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+  //       borderWidth: 1
+  //     }
+  //   ]
+  // };
+
   // Dados para o gráfico de pizza por cultura
   const culturasData = {
     labels: dashboardData.culturas.map(item => item.cultura),
     datasets: [
       {
         label: 'Fazendas por Cultura',
-        data: dashboardData.culturas.map(item => item.total),
+        data: dashboardData.culturas.map(item => parseInt(item.total, 10)),  // Converte strings para números
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
         borderWidth: 1
@@ -58,21 +73,20 @@ function Dashboard() {
     ]
   };
 
-  // Dados para o gráfico de pizza por uso de solo
   const usoSoloData = {
     labels: ['Área Agricultável', 'Área de Vegetação'],
     datasets: [
-      {
-        label: 'Uso de Solo',
-        data: [dashboardData.usoSolo.total_agricultavel, dashboardData.usoSolo.total_vegetacao],
-        backgroundColor: ['#FF6384', '#36A2EB'],
-        hoverBackgroundColor: ['#FF6384', '#36A2EB'],
-        borderWidth: 1
-      }
-    ]
+        {
+          label: 'Uso de Solo',
+          // Converta para números com parseFloat
+          data: [parseFloat(dashboardData.usoSolo.total_agricultavel), parseFloat(dashboardData.usoSolo.total_vegetacao)],
+          backgroundColor: ['#FF6384', '#36A2EB'],
+          hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+          borderWidth: 1
+        }
+      ]
   };
 
-  // Opções para o Chart.js com maintainAspectRatio false e porcentagens no gráfico
   const options = {
     maintainAspectRatio: false,
     aspectRatio: 1, // Força o gráfico a ter proporção 1:1 (perfeito para gráficos de pizza)
@@ -84,10 +98,20 @@ function Dashboard() {
         callbacks: {
           label: function (tooltipItem) {
             const dataset = tooltipItem.dataset;
-            const total = dataset.data.reduce((prev, current) => prev + current, 0);
-            const currentValue = dataset.data[tooltipItem.dataIndex];
-            const percentage = ((currentValue / total) * 100).toFixed(2);
-            return `${tooltipItem.label}: ${currentValue} (${percentage}%)`;
+            const total = dataset.data.reduce((prev, current) => prev + current, 0); // Soma de todos os valores (total de fazendas)
+            const currentValue = dataset.data[tooltipItem.dataIndex]; // Valor da fatia atual (fazendas por estado)
+    
+            // Obtenha o label correto da série de dados
+            const label = tooltipItem.chart.data.labels[tooltipItem.dataIndex];
+    
+            // Verificar se o total é maior que 0 para evitar divisão por zero
+            if (total > 0) {
+              const percentage = ((currentValue / total) * 100).toFixed(2); // Calcula a porcentagem
+              console.log(`Calculando porcentagem para ${label}: ${percentage}%`);
+              return `${label}: ${currentValue} (${percentage}%)`;
+            } else {
+              return `${label}: ${currentValue} (0%)`;
+            }
           },
         },
       },

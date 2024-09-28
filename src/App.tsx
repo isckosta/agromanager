@@ -11,7 +11,7 @@ function App() {
   const [isViewing, setIsViewing] = useState(false);
   const [cidadesDisponiveis, setCidadesDisponiveis] = useState([]);
   const [estadosDisponiveis, setEstadosDisponiveis] = useState([]);
-  const [culturasDisponiveis, setCulturasDisponiveis] = useState([]); // Definição correta
+  const [culturasDisponiveis, setCulturasDisponiveis] = useState([]);
 
   const culturesOptions = ["Soja", "Milho", "Algodão", "Café", "Cana de Açúcar"];
 
@@ -65,38 +65,26 @@ function App() {
     const estadoSelecionado = selectedOption ? selectedOption.value : '';
   
     if (!estadoSelecionado) {
-      console.warn('Estado não selecionado, abortando a busca por cidades.');
       return;
     }
-  
-    // Atualiza o estado no formData e não redefine a cidade se for o mesmo estado
-    const shouldResetCidade = formData.estado !== estadoSelecionado;
-  
-    setFormData({ 
-      ...formData, 
-      estado: estadoSelecionado, 
-      cidade: shouldResetCidade ? '' : formData.cidade 
-    });
   
     try {
       const response = await fetch(`http://localhost:3000/api/estados/${estadoSelecionado}/cidades`);
       const data = await response.json();
-  
-      if (!Array.isArray(data)) {
-        console.error('Erro: dados de cidades inválidos');
-        return;
-      }
-  
+      
       setCidadesDisponiveis(data);
   
-      if (shouldResetCidade && data.length > 0) {
-        // Define a cidade para o primeiro item disponível se não houver cidade selecionada
-        setFormData(prevFormData => ({ ...prevFormData, cidade: data[0].id }));
-      }
+      // Se for uma nova seleção de estado, limpar a cidade
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        estado: estadoSelecionado,
+        cidade: data.length > 0 ? data[0].id : '', // Seleciona a primeira cidade disponível, se houver
+      }));
     } catch (error) {
       console.error('Erro ao buscar cidades:', error);
     }
   };
+  
 
   const handleCidadeChange = (selectedOption) => {
     setFormData({ ...formData, cidade: selectedOption ? selectedOption.value : '' });
@@ -126,18 +114,21 @@ function App() {
     setFormData({ ...formData, culturas: value });
   };
 
-  useEffect(() => {
-    const fetchProdutores = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/produtores');
-        const data = await response.json();
-        setProdutores(data);
-      } catch (error) {
-        console.error('Erro ao buscar produtores:', error);
-      }
-    };
+  // Mova a função fetchProdutores para fora do useEffect
+  const fetchProdutores = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/produtores');
+      const data = await response.json();
+      console.log("Dados dos produtores recebidos:", data);
+      setProdutores(data); // Atualiza o estado com os dados recebidos
+    } catch (error) {
+      console.error('Erro ao buscar produtores:', error);
+    }
+  };
 
+  useEffect(() => {
     if (currentPage === 'produtores') {
+      console.log("Página de produtores ativa, buscando produtores...");
       fetchProdutores();
     }
   }, [currentPage]);
@@ -145,79 +136,86 @@ function App() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
   
-    // Verifique os dados antes de enviar
-    console.log("DEBUG - Dados do formData:", formData);
-  
     const produtor = {
-      cpf_cnpj: formData.cpf_cnpj.replace(/\D/g, ''), // Remove todos os caracteres não numéricos
-      nome_produtor: formData.nome_produtor, // Aqui, deve ter o nome do produtor
+        cpf_cnpj: formData.cpf_cnpj.replace(/\D/g, ''),
+        nome_produtor: formData.nome_produtor,
     };
   
-    console.log("DEBUG - Dados do produtor:", produtor);
-  
     const fazenda = {
-      nome_fazenda: formData.nome_fazenda,
-      municipio_id: formData.cidade,
-      area_total: formData.area_total,
-      area_agricultavel: formData.area_agricultavel,
-      area_vegetacao: formData.area_vegetacao,
+        nome_fazenda: formData.nome_fazenda,
+        municipio_id: formData.cidade,
+        area_total: formData.area_total,
+        area_agricultavel: formData.area_agricultavel,
+        area_vegetacao: formData.area_vegetacao,
     };
   
     const culturas = formData.culturas;
   
     const dataToSend = {
-      produtor: {
-        cpf_cnpj: produtor.cpf_cnpj,
-        nome_produtor: formData.nome_produtor, // Certifique-se de que este campo está preenchido
-      },
-      fazenda,
-      culturas
+        produtor,
+        fazenda,
+        culturas,
     };
   
-    // Verificar se os dados estão corretos antes de enviar
-    console.log("DEBUG - Dados a serem enviados:", dataToSend);
-  
     try {
-      const method = editingProdutor ? 'PUT' : 'POST'; // Use PUT para edição
-      console.log("DEBUG - Método da requisição:", method);
-      
-      const url = editingProdutor
-        ? `http://localhost:3000/api/produtores/${editingProdutor.id}`
-        : `http://localhost:3000/api/produtores`;
+        const method = editingProdutor ? 'PUT' : 'POST';
+        const url = editingProdutor
+            ? `http://localhost:3000/api/produtores/${editingProdutor.id}`
+            : `http://localhost:3000/api/produtores`;
   
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dataToSend),
-      });
-  
-      console.log("DEBUG - Resposta da requisição:", response);
-  
-      if (response.ok) {
-        alert(editingProdutor ? 'Produtor atualizado com sucesso!' : 'Produtor cadastrado com sucesso!');
-        setShowModal(false);
-  
-        // Limpar os dados
-        setFormData({
-          cpf_cnpj: '',
-          nome_produtor: '',
-          nome_fazenda: '',
-          cidade: '',
-          estado: '',
-          area_total: '',
-          area_agricultavel: '',
-          area_vegetacao: '',
-          culturas: [],
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToSend),
         });
-      } else {
-        const errorData = await response.json();
-        alert('Erro ao salvar produtor: ' + errorData.error);
-      }
+  
+        if (response.ok) {
+            const novoProdutor = await response.json();
+  
+            // Verifique se a resposta tem todos os dados necessários
+            const cidadeNome = cidadesDisponiveis.find(cidade => cidade.id === novoProdutor.fazenda.municipio_id)?.nome;
+            const estadoNome = estadosDisponiveis.find(estado => estado.uf === formData.estado)?.nome;
+  
+            // Atualize o novo produtor com as informações da cidade e estado
+            novoProdutor.fazenda.cidade = cidadeNome || 'Cidade não encontrada';
+            novoProdutor.fazenda.estado = estadoNome || 'Estado não encontrado';
+  
+            // Atualize a lista de produtores sem fazer uma nova requisição
+            setProdutores((produtoresAnteriores) =>
+                editingProdutor
+                    ? produtoresAnteriores.map((produtor) => 
+                          produtor.id === editingProdutor.id ? novoProdutor : produtor
+                      )
+                    : [...produtoresAnteriores, novoProdutor]
+            );
+  
+            alert(editingProdutor ? 'Produtor atualizado com sucesso!' : 'Produtor cadastrado com sucesso!');
+            setShowModal(false);
+  
+            // Limpar os dados do formulário
+            setFormData({
+                cpf_cnpj: '',
+                nome_produtor: '',
+                nome_fazenda: '',
+                cidade: '',
+                estado: '',
+                area_total: '',
+                area_agricultavel: '',
+                area_vegetacao: '',
+                culturas: [],
+            });
+
+            // Recarrega a lista de produtores
+            await fetchProdutores();
+        } else {
+            const errorData = await response.json();
+            alert('Erro ao salvar produtor: ' + errorData.error);
+        }
     } catch (error) {
-      console.error('Erro:', error);
-      alert('Erro na conexão com o servidor.');
+        console.error('Erro:', error);
+        alert('Erro na conexão com o servidor.');
     }
   };
 
@@ -244,13 +242,40 @@ function App() {
     }
   };
 
-  const handleViewProdutor = (produtor) => {
-    handleEstadoChange({ value: produtor.estado });
+  const handleViewProdutor = async (produtor) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/produtores/${produtor.id}`);
+      const data = await response.json();
+    
+      const municipioId = data.fazenda.municipio_id;
   
-    setFormData({ ...produtor, cpf_cnpj: handleCpfCnpjMask(produtor.cpf_cnpj), culturas: produtor.culturas || [] });
-    setEditingProdutor(produtor);
-    setIsViewing(true);
-    setShowModal(true);
+      // Buscar o estado com base no municipio_id
+      const responseMunicipio = await fetch(`http://localhost:3000/api/municipios/${municipioId}`);
+      const municipioData = await responseMunicipio.json();
+    
+      const estadoId = municipioData.estado_id;
+  
+      // Carregar as cidades do estado correspondente
+      await handleEstadoChange({ value: estadoId });
+  
+      // Atualizar os dados no formData com os dados corretos para visualização, incluindo as culturas
+      setFormData({
+        cpf_cnpj: handleCpfCnpjMask(data.produtor.cpf_cnpj),
+        nome_produtor: data.produtor.nome_produtor,
+        nome_fazenda: data.fazenda.nome_fazenda,
+        cidade: municipioId,
+        estado: estadoId,
+        area_total: data.fazenda.area_total,
+        area_agricultavel: data.fazenda.area_agricultavel,
+        area_vegetacao: data.fazenda.area_vegetacao,
+        culturas: data.culturas,  // Certifique-se de passar os IDs das culturas
+      });
+  
+      setIsViewing(true);
+      setShowModal(true);
+    } catch (error) {
+      console.error('Erro ao buscar produtor:', error);
+    }
   };
 
   const handleEditProdutor = async (produtor) => {
@@ -341,34 +366,39 @@ function App() {
             <h2>Gestão de Produtores</h2>
             <button className="btn cadastrar-btn" onClick={handleAddProdutor}>Cadastrar</button>
 
-            <div className="table-wrapper">
-              <table className="produtores-table">
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Nome da Fazenda</th>
-                    <th>Cidade</th>
-                    <th>Estado</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {produtores.map((produtor) => (
-                    <tr key={produtor.id}>
-                      <td>{produtor.nome_produtor}</td>
-                      <td>{produtor.nome_fazenda}</td>
-                      <td>{produtor.cidade}</td>
-                      <td>{produtor.estado}</td>
-                      <td>
-                        <button className="btn" onClick={() => handleEditProdutor(produtor)}>Editar</button>
-                        <button className="btn btn-danger" onClick={() => handleDeleteProdutor(produtor.id)}>Excluir</button>
-                        <button className="btn" onClick={() => handleViewProdutor(produtor)}>Visualizar</button>
-                      </td>
+            {/* Verificar se existem produtores */}
+            {produtores.length === 0 ? (
+              <p>Nenhum produtor cadastrado</p>
+            ) : (
+              <div className="table-wrapper">
+                <table className="produtores-table">
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th>Nome da Fazenda</th>
+                      <th>Cidade</th>
+                      <th>Estado</th>
+                      <th>Ações</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {produtores.map((produtor) => (
+                      <tr key={produtor.id}>
+                        <td>{produtor.nome_produtor}</td>
+                        <td>{produtor.nome_fazenda}</td>
+                        <td>{produtor.cidade}</td>
+                        <td>{produtor.estado}</td>
+                        <td>
+                          <button className="btn" onClick={() => handleEditProdutor(produtor)}>Editar</button>
+                          <button className="btn btn-danger" onClick={() => handleDeleteProdutor(produtor.id)}>Excluir</button>
+                          <button className="btn" onClick={() => handleViewProdutor(produtor)}>Visualizar</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
             {showModal && (
               <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
@@ -535,20 +565,19 @@ function App() {
                               labelId="cultures-label"
                               id="culturas"
                               multiple
-                              value={formData.culturas} // IDs das culturas selecionadas
+                              value={formData.culturas}
                               onChange={handleSelectChange}
-                              renderValue={(selected) => {
-                                // Renderiza os nomes das culturas selecionadas
-                                return culturasDisponiveis
-                                  .filter(cultura => selected.includes(cultura.id)) // Filtra as culturas que estão selecionadas
-                                  .map(cultura => cultura.nome) // Mapeia para os nomes das culturas
-                                  .join(', ');
-                              }}
+                              renderValue={(selected) => 
+                                culturasDisponiveis
+                                  .filter(cultura => selected.includes(cultura.id))
+                                  .map(cultura => cultura.nome)
+                                  .join(', ')
+                              }
                               size="small"
-                              disabled={isViewing} // Desabilita no modo de visualização
+                              disabled={isViewing}
                             >
                               {culturasDisponiveis.map((culture) => (
-                                <MenuItem key={culture.id} value={culture.id}>
+                                <MenuItem key={culture.id} value={culture.id}> {/* Adicionar key aqui */}
                                   <Checkbox checked={formData.culturas.includes(culture.id)} />
                                   <ListItemText primary={culture.nome} />
                                 </MenuItem>
