@@ -10,7 +10,6 @@ AgroManager é uma aplicação para gerenciar produtores, fazendas e culturas. E
 - [Executando a Aplicação](#executando-a-aplicação)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Rotas da API](#rotas-da-api)
-- [Contribuição](#contribuição)
 - [Licença](#licença)
 
 ## Tecnologias Utilizadas
