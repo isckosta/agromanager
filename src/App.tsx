@@ -114,7 +114,6 @@ function App() {
     setFormData({ ...formData, culturas: value });
   };
 
-  // Mova a função fetchProdutores para fora do useEffect
   const fetchProdutores = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/produtores');
@@ -174,15 +173,12 @@ function App() {
         if (response.ok) {
             const novoProdutor = await response.json();
   
-            // Verifique se a resposta tem todos os dados necessários
             const cidadeNome = cidadesDisponiveis.find(cidade => cidade.id === novoProdutor.fazenda.municipio_id)?.nome;
             const estadoNome = estadosDisponiveis.find(estado => estado.uf === formData.estado)?.nome;
   
-            // Atualize o novo produtor com as informações da cidade e estado
             novoProdutor.fazenda.cidade = cidadeNome || 'Cidade não encontrada';
             novoProdutor.fazenda.estado = estadoNome || 'Estado não encontrado';
   
-            // Atualize a lista de produtores sem fazer uma nova requisição
             setProdutores((produtoresAnteriores) =>
                 editingProdutor
                     ? produtoresAnteriores.map((produtor) => 
@@ -194,7 +190,6 @@ function App() {
             alert(editingProdutor ? 'Produtor atualizado com sucesso!' : 'Produtor cadastrado com sucesso!');
             setShowModal(false);
   
-            // Limpar os dados do formulário
             setFormData({
                 cpf_cnpj: '',
                 nome_produtor: '',

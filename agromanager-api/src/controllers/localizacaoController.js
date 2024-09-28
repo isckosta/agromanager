@@ -14,7 +14,7 @@ exports.getEstados = async (req, res) => {
 
 // Função para buscar cidades com base na sigla do estado
 exports.getCidadesByEstado = async (req, res) => {
-  const sigla = req.params.sigla.toUpperCase(); // Certifica-se de que a sigla está em maiúsculas
+  const sigla = req.params.sigla.toUpperCase();
   console.log("Sigla do estado recebida:", sigla);
 
   try {

@@ -5,10 +5,10 @@ const pool = require('../db');
 // Rota para dados do dashboard
 router.get('/dashboard', async (req, res) => {
   try {
-    // Total de fazendas
+    /
     const totalFazendas = await pool.query('SELECT COUNT(*) FROM fazendas');
 
-    // Total de área
+    
     const totalArea = await pool.query('SELECT SUM(area_total) FROM fazendas');
 
     // Gráfico de pizza por estado

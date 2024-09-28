@@ -41,6 +41,6 @@ exports.getEstadoByMunicipio = async (municipioId) => {
     return result.rows[0];
   } catch (error) {
     console.log("Error: ", error);
-    throw error; // Deixa o erro ser capturado pelo controller
+    throw error;
   }
 };

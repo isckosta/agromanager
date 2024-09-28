@@ -1,18 +1,15 @@
-// src/controllers/produtoresController.js
 const Produtor = require('../models/produtor');
 
 exports.createProdutor = async (req, res) => {
   try {
     const { produtor, fazenda, culturas } = req.body;
 
-    // Verifique se o nome do produtor está presente
     if (!produtor.nome_produtor) {
       return res.status(400).json({ error: 'O nome do produtor é obrigatório.' });
     }
 
     console.log("DEBUG - Dados recebidos no Backend:", produtor, fazenda, culturas);
 
-    // Continue com a criação do produtor
     const novoProdutor = await Produtor.createProdutor(produtor, fazenda, culturas);
     res.status(201).json(novoProdutor);
   } catch (error) {

@@ -1,4 +1,3 @@
-  // src/models/produtor.js
   const pool = require('../db');
 
   // Função para criar um novo produtor
@@ -6,9 +5,6 @@
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-
-      // Log para verificar o que está sendo recebido
-      console.log("DEBUG - Dados recebidos no Backend:", produtor, fazenda, culturas);
 
       if (!produtor.cpf_cnpj) {
         throw new Error('CPF ou CNPJ não pode ser nulo');
@@ -52,7 +48,7 @@
       // Atualiza o produtor
       await client.query(
         'UPDATE produtores SET nome_produtor=$1 WHERE id=$2',
-        [produtor.nome_produtor, id] // Aqui, o nome_produtor deve estar presente e correto
+        [produtor.nome_produtor, id] 
       );
   
       // Atualiza a fazenda associada ao produtor

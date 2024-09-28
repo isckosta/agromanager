@@ -46,19 +46,6 @@ function Dashboard() {
     ]
   };
 
-  // const fazendasPorEstadoData = {
-  //   labels: ['AM', 'BA', 'CE', 'MA'],
-  //   datasets: [
-  //     {
-  //       label: 'Fazendas por Estado',
-  //       data: [1, 2, 3, 4], // Teste com valores diferentes
-  //       backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-  //       hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-  //       borderWidth: 1
-  //     }
-  //   ]
-  // };
-
   // Dados para o gráfico de pizza por cultura
   const culturasData = {
     labels: dashboardData.culturas.map(item => item.cultura),
