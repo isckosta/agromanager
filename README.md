@@ -1,50 +1,132 @@
-# React + TypeScript + Vite
+# AgroManager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AgroManager é uma aplicação para gerenciar produtores, fazendas e culturas. Ele permite cadastrar, editar e visualizar produtores e as fazendas associadas, bem como as culturas plantadas. O projeto utiliza uma arquitetura baseada em React.js para o frontend e Node.js com PostgreSQL no backend.
 
-Currently, two official plugins are available:
+## Índice
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação](#instalação)
+- [Executando a Aplicação](#executando-a-aplicação)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Rotas da API](#rotas-da-api)
+- [Contribuição](#contribuição)
+- [Licença](#licença)
 
-## Expanding the ESLint configuration
+## Tecnologias Utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Frontend:** React.js, Material UI
+- **Backend:** Node.js, Express.js
+- **Banco de Dados:** PostgreSQL
+- **Outras:** Chart.js para gráficos, Autocomplete e Select do Material UI, REST API
 
-- Configure the top-level `parserOptions` property like this:
+## Pré-requisitos
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- **Node.js** (v14 ou superior)
+- **PostgreSQL** (v12 ou superior)
+- **Git** (opcional)
+
+## Instalação
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/isckosta/agromanager.git
+cd agromanager
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. Instale as dependências do backend:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+cd agromanager-api
+pnpm install
 ```
+
+3. Instale as dependências do frontend:
+
+```bash
+cd ../agromanager
+pnpm install
+```
+
+4. Crie um container com um banco de dados no PostgreSQL e aplique as migrações:
+
+```bash
+docker run --name postgres_db -e POSTGRES_USER=root -e POSTGRES_PASSWORD=agro -e POSTGRES_DB=agromanager -p 5432:5432 -v pgdata:/var/lib/postgresql/data -d postgres:15
+```
+
+## Executando a Aplicação
+
+### Backend
+
+1. Crie um arquivo `.env` no diretório `agromanager-api` com as seguintes variáveis de ambiente:
+
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=agro
+DB_NAME=agromanager
+DB_PORT=5432
+```
+
+2. Inicie o servidor backend:
+
+```bash
+cd agromanager-api
+node src/app.js
+```
+
+O backend estará disponível em `http://localhost:3000`.
+
+### Frontend
+
+1. Inicie o frontend:
+
+```bash
+cd agromanager
+pnpm start ou pnpm run dev
+```
+
+O frontend estará disponível em `http://localhost:3001`.
+
+## Estrutura do Projeto
+
+```plaintext
+agromanager/
+│
+├── agromanager-api/              # Código do backend
+│   ├── src/
+│   │   ├── controllers/          # Controladores da API
+│   │   ├── models/               # Modelos e consultas SQL
+│   │   ├── routes/               # Rotas da API
+│   └── app.js                    # Ponto de entrada do servidor Express
+│   └── db.js                     # Configuração da conexão ao banco
+│   └── .env                      # Variáveis de ambiente
+│   └── package.json              # Dependências do backend
+│
+├── agromanager/                  # Código do frontend
+│   ├── public/                   # Arquivos públicos estáticos
+│   ├── src/
+│   │   ├── assets/               # CSS, imagens e outros recursos
+│   ├── App.js                    # Componente principal da aplicação
+│   └── package.json              # Dependências do frontend
+└── README.md                     # Documentação do projeto
+```
+
+## Rotas da API
+
+### Produtores
+
+- **GET /api/produtores**: Retorna todos os produtores cadastrados.
+- **GET /api/produtores/:id**: Retorna um produtor pelo ID.
+- **POST /api/produtores**: Cria um novo produtor.
+- **PUT /api/produtores/:id**: Atualiza um produtor existente.
+- **DELETE /api/produtores/:id**: Exclui um produtor.
+
+### Culturas
+
+- **GET /api/culturas**: Retorna todas as culturas cadastradas.
+
+## Licença
+
+Este projeto está licenciado sob os termos da licença MIT.
