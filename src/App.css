@@ -1,0 +1,322 @@
+/* Global Styles */
+body, html, #root, .app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-container {
+  text-align: center;
+}
+
+.dashboard-info {
+  margin-bottom: 20px;
+}
+
+.charts-row {
+  display: flex;
+  justify-content: center;  /* Centraliza os gráficos */
+  gap: 20px;                /* Espaçamento entre os gráficos */
+  flex-wrap: wrap;          /* Permite que os gráficos se ajustem em telas menores */
+}
+
+.chart-container {
+  width: 300px;    /* Definindo a largura de cada gráfico */
+  height: 300px;   /* Definindo a altura de cada gráfico */
+}
+
+h2, h3 {
+  margin-bottom: 10px;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  background-color: #00796b;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+.menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.menu li {
+  margin: 0 1rem;
+}
+
+.menu button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s;
+}
+
+.menu button.active,
+.menu button:hover {
+  background-color: #004d40;
+  border-radius: 5px;
+}
+
+.content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #f4f4f4;
+}
+
+.content h2 {
+  margin-top: 0;
+}
+
+.footer {
+  background-color: #00796b;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.produtor-form {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os campos se alinhem em duas colunas */
+  gap: 20px; /* Espaçamento entre os campos */
+}
+
+.produtor-form div {
+  flex: 1 1 45%; /* Cada campo ocupa cerca de 45% da largura */
+  min-width: 200px; /* Largura mínima para não comprimir demais */
+}
+
+.produtor-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.produtor-form input,
+.produtor-form select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn {
+  background-color: #00796b;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-submit {
+  background-color: #004d40;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.btn-close {
+  background-color: #d32f2f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-submit:hover,
+.btn:hover {
+  background-color: #005e4f;
+}
+
+.btn-close:hover {
+  background-color: #c62828;
+}
+
+/* Centraliza a tabela e ajusta o espaçamento entre linhas */
+.table-wrapper {
+  display: flex;
+  justify-content: center; /* Centraliza a tabela */
+  margin-top: 20px;
+}
+
+.produtores-table {
+  width: 80%; /* Ajuste conforme necessário */
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.produtores-table th, .produtores-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.produtores-table th {
+  background-color: #00796b;
+  color: white;
+}
+
+.produtores-table tr {
+  background-color: white;
+}
+
+.produtores-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.produtores-table tr:hover {
+  background-color: #ddd;
+}
+
+.produtores-table td {
+  padding: 15px; /* Ajusta o espaçamento entre as células */
+}
+
+.produtores-table th {
+  padding: 15px; /* Ajusta o espaçamento do cabeçalho */
+}
+
+/* Botões de ação na tabela */
+.produtores-table .btn {
+  margin-right: 5px;
+}
+
+.cadastrar-btn {
+  margin-bottom: 20px;
+}
+
+/* Ajusta o espaçamento das linhas da tabela */
+.produtores-table tr {
+  height: 50px; /* Ajusta a altura das linhas */
+}
+
+/* Página inicial - Welcome Section */
+.home-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 50px 20px;
+  background-color: #f4f4f4;
+}
+
+.welcome-container {
+  margin-bottom: 40px;
+}
+
+.welcome-container h1 {
+  font-size: 2.5rem;
+  color: #00796b;
+  margin-bottom: 20px;
+}
+
+.welcome-container p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.explorar-btn {
+  background-color: #00796b;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.explorar-btn:hover {
+  background-color: #004d40;
+}
+
+/* Features Section */
+.features-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 40px;
+}
+
+.feature-box {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 30%;
+  min-width: 250px;
+  margin: 10px;
+}
+
+.feature-box h3 {
+  color: #00796b;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.feature-box p {
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .features-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature-box {
+    width: 80%;
+    margin-bottom: 20px;
+  }
+
+  .welcome-container h1 {
+    font-size: 2rem;
+  }
+
+  .welcome-container p {
+    font-size: 1rem;
+  }
+}
+
+
+
+
